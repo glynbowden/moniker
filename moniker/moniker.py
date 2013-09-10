@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 
 import random
-import re
+from os.path import abspath, dirname, join as pjoin
 
-def get_words(filename, min_length = 3, max_length=9, disallowed=[' ', '-']):
+
+def get_words(filename, min_length=3, max_length=9, disallowed=[' ', '-']):
     words = []
+    filename = abspath(pjoin(dirname(__file__), filename))
     with open(filename, 'r') as data_in:
         for line in data_in:
             word = line.strip().lower()
@@ -15,22 +17,31 @@ def get_words(filename, min_length = 3, max_length=9, disallowed=[' ', '-']):
                     words.append(word)
     return words
 
-__dictionaries = ['adverbs','verbs','nouns']
-words = [get_words(dictionary) for dictionary in __dictionaries]
 
-def create_name(add_number=99):
+_dictionaries = ['adverbs', 'verbs', 'nouns']
+words = [get_words(dictionary+'.txt') for dictionary in _dictionaries]
+
+
+def create_name(add_number=99, hashable=None):
     """
     Create a random, semi-realistic, name. If add_number is != 0 (default 99) a
     number in range 1-add_number is added to the end of the name.
+
+    If you include a hashable in the call to create_name the returned name is
+    consistent across calls.
     """
+    if hashable:
+        random.seed(hashable)
     name = [random.choice(wlist) for wlist in words]
     if add_number:
-        name.append(str(random.randint(1,add_number)))
+        name.append(str(random.randint(1, add_number)))
     return '-'.join(name)
+
 
 def name_possibilities():
     '''Get the number of possible names'''
-    return reduce(lambda pos, lst: pos*len(lst),words, 1)
+    return reduce(lambda pos, lst: pos*len(lst), words, 1)
+
 
 def word_len():
     '''Number of words being used'''
