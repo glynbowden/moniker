@@ -1,5 +1,6 @@
 Moniker
 =======
+Generate pseudo-random names.
 
 Moniker is tiny python module for creating random names.
 It is _very_ simple.
